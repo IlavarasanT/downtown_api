@@ -75,7 +75,7 @@ namespace downtown.Controllers
             }
         }
         [HttpGet]
-        [Route("checkemail")]
+        [Route("checkuserisvalid")]
         public async Task<IEnumerable<Register>> CheckEmailIsValid(string email)
         {
 
