@@ -38,7 +38,6 @@ namespace downtown.Controllers
         [Route("getdept")]
         public async Task<IEnumerable<Department>> GetCompanies()
         {
-            //var query = "SELECT * FROM Companies";
 
             using (var connection = _context.CreateConnection())
             {
@@ -46,7 +45,57 @@ namespace downtown.Controllers
                 return departmentList.ToList();
             }
         }
+        [HttpGet]
+        [Route("getregister")]
+        public async Task<IEnumerable<Register>> GetRegister()
+        {
 
+            using (var connection = _context.CreateConnection())
+            {
+                var registerList = await connection.QueryAsync<Register>(SqlQuery.GetRegisterDetails);
+                return registerList.ToList();
+            }
+        }
+        [HttpPost]
+        [Route("Register")]
+        public async Task<IEnumerable<Register>> SaveRegisterDetails(Register registerDetails)
+        {
+
+            using (var connection = _context.CreateConnection())
+            {
+                var response = await connection.QueryAsync<Register>(SqlQuery.SaveRegisterDetails, new { 
+                    FirstName=registerDetails.FirstName, 
+                    LastName=registerDetails.LastName,
+                    Email=registerDetails.Email,
+                    Password=registerDetails.Password,
+                    Address=registerDetails.Address,
+                    PhoneNumber=registerDetails.PhoneNumber
+                });
+                return response;
+            }
+        }
+        [HttpGet]
+        [Route("checkemail")]
+        public async Task<IEnumerable<Register>> CheckEmailIsValid(string email)
+        {
+
+            using (var connection = _context.CreateConnection())
+            {
+                var registerDetail = await connection.QueryAsync<Register>(SqlQuery.GetEmailAddressAndPassword, new { Email=email });
+                return registerDetail;
+            }
+        }
+        [HttpGet]
+        [Route("checkemailexist")]
+        public async Task<IEnumerable<string>> CheckEmailIsExist(string email)
+        {
+
+            using (var connection = _context.CreateConnection())
+            {
+                var registerDetail = await connection.QueryAsync<string>(SqlQuery.GetEmailAddress, new { Email = email });
+                return registerDetail;
+            }
+        }
 
     }
 }
