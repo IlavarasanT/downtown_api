@@ -74,14 +74,16 @@ namespace downtown.Controllers
                 return response;
             }
         }
-        [HttpGet]
+        //[HttpGet]
+        //[Route("checkuserisvalid/{email}")]
+        [HttpPost]
         [Route("checkuserisvalid")]
-        public async Task<IEnumerable<Register>> CheckEmailIsValid(string email)
+        public async Task<IEnumerable<registerinfo>> CheckEmailIsValid(registerinfo registerinfo)
         {
 
             using (var connection = _context.CreateConnection())
             {
-                var registerDetail = await connection.QueryAsync<Register>(SqlQuery.GetEmailAddressAndPassword, new { Email=email });
+                var registerDetail = await connection.QueryAsync<registerinfo>(SqlQuery.GetEmailAddressAndPassword, new { Email= registerinfo.Email });
                 return registerDetail;
             }
         }

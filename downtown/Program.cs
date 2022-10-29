@@ -12,7 +12,16 @@ builder.Services.AddEndpointsApiExplorer();
 //for dapper connection added in start up file in .net 5 or program.cs in .net 6
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddControllers();
+//enable cors
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy",
+        builder => builder.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader());
+});
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -20,6 +29,11 @@ if (app.Environment.IsDevelopment())
    // app.UseSwagger();
     //app.UseSwaggerUI();
 }
+app.UseCors(x => x
+       .SetIsOriginAllowed(origin => true)
+       .AllowAnyMethod()
+       .AllowAnyHeader()
+       .AllowCredentials());
 
 app.UseHttpsRedirection();
 
