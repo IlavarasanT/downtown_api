@@ -76,28 +76,84 @@ namespace downtown.Controllers
         }
         //[HttpGet]
         //[Route("checkuserisvalid/{email}")]
-        [HttpPost]
-        [Route("checkuserisvalid")]
-        public async Task<IEnumerable<registerinfo>> CheckEmailIsValid(registerinfo registerinfo)
-        {
+        //[HttpPost]
+        //[Route("checkuserisvalid")]
+        //public async Task<IEnumerable<registerinfo>> CheckEmailIsValid(registerinfo registerinfo)
+        //{
 
-            using (var connection = _context.CreateConnection())
-            {
-                var registerDetail = await connection.QueryAsync<registerinfo>(SqlQuery.GetEmailAddressAndPassword, new { Email= registerinfo.Email });
-                return registerDetail;
-            }
-        }
+        //    using (var connection = _context.CreateConnection())
+        //    {
+        //        var registerDetail = await connection.QueryAsync<registerinfo>(SqlQuery.GetEmailAddressAndPassword, new { Email= registerinfo.Email });
+        //        return registerDetail;
+        //    }
+        //}
+        //[HttpGet]
+        //[Route("checkemailexist")]
+        //public async Task<IEnumerable<string>> CheckEmailIsExist(string email)
+        //{
+
+        //    using (var connection = _context.CreateConnection())
+        //    {
+        //        var registerDetail = await connection.QueryAsync<string>(SqlQuery.GetEmailAddress, new { Email = email });
+        //        return registerDetail;
+        //    }
+        //}
+
+        #region  check the user is exists
         [HttpGet]
-        [Route("checkemailexist")]
-        public async Task<IEnumerable<string>> CheckEmailIsExist(string email)
+        [Route("checkuser")]
+        public async Task<registerinfo> CheckEmailIsValid(string email)
         {
+            var response = new registerinfo();
 
-            using (var connection = _context.CreateConnection())
+
+            if (email != null && email != "")
             {
-                var registerDetail = await connection.QueryAsync<string>(SqlQuery.GetEmailAddress, new { Email = email });
-                return registerDetail;
+                using (var connection = _context.CreateConnection())
+                {
+                    response = await connection.QueryFirstOrDefaultAsync<registerinfo>(SqlQuery.GetEmailAddressAndPassword, new { Email = email });
+                    return (response);
+
+                }
+
+            }
+
+            else
+            {
+                return (response);
             }
         }
+
+        #endregion
+
+        #region  check the email address is already exists or not
+
+        [HttpGet]
+        [Route("getemail")]
+        public async Task<registerinfo> CheckEmailIsExist(string email)
+        {
+            var response = new registerinfo();
+
+
+            if (email != null && email != "")
+            {
+                using (var connection = _context.CreateConnection())
+                {
+                    response = await connection.QueryFirstOrDefaultAsync<registerinfo>(SqlQuery.GetEmailAddress, new { Email = email });
+                    return (response);
+
+                }
+
+            }
+
+            else
+            {
+                return (response);
+            }
+        }
+        #endregion
+
+
 
     }
 }
