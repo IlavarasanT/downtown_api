@@ -12,5 +12,11 @@
         public const string GetEmailAddress= "select Email from register where Email=@Email";
         //get register table details
         public const string GetRegisterDetails= "select * from register";
+        //save product details
+        public const string SaveProductDetails = "insert into product_table values(@ProductName,@ProductDesc,@ProductPrice,@ProductQuantity,@ProductImage)";
+        //get product details
+        //public const string GetProductDetails = "select * from product_table";
+
+        public const string GetProductDetails = "SELECT productname,productdesc,productprice,productquantity,CONVERT(VARCHAR(max), productimage,0) as productimage from product_table";
     }
 }

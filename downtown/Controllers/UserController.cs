@@ -5,6 +5,8 @@ using downtown.Model;
 using downtown.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.IO;
 
 namespace downtown.Controllers
 {
@@ -12,18 +14,19 @@ namespace downtown.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        //private readonly SqlService _sqlService;
+        private readonly DapperContext _context;
 
-
-        //public UserController(SqlService sqlService)
+        //private readonly SqlService _sqlservice;
+        //public UserController(SqlService sqlservice)
         //{
-        //    _sqlService = sqlService;
+        //    _sqlservice = sqlservice;
+
         //}
 
-        private readonly DapperContext _context;
         public UserController(DapperContext context)
         {
             _context = context;
+
         }
 
         //[HttpGet]
@@ -73,6 +76,40 @@ namespace downtown.Controllers
                 });
                 return response;
             }
+        }
+
+        [HttpPost]
+        [Route("saveproduct")]
+        public async Task<IEnumerable<ProductDetails>> SaveRegisterDetails(ProductDetails productDetails)
+        {
+
+            using (var connection = _context.CreateConnection())
+            {
+                var response = await connection.QueryAsync<ProductDetails>(SqlQuery.SaveProductDetails, new
+                {
+                    ProductName = productDetails.ProductName,
+                    ProductDesc = productDetails.ProductDesc,
+                    ProductPrice = productDetails.ProductPrice,
+                    ProductQuantity = productDetails.ProductQuantity,
+                    ProductImage = productDetails.ProductImage,
+                });
+                return response;
+            }
+        }
+        [HttpGet]
+        [Route("getproduct")]
+        public async Task<IEnumerable<ProductDetails>> GetProduct()
+        {
+            var productDetailsList = new ProductDetails();
+            using (var connection = _context.CreateConnection())
+            {
+                var registerList = await connection.QueryAsync<ProductDetails>(SqlQuery.GetProductDetails);
+                return registerList.ToList();
+            }
+            //using (var connection = _context.CreateConnection())
+            //{
+            //    productDetailsList = await connection.QueryAsync<ProductDetails>(SqlQuery.GetProductDetails);
+            //}
         }
         //[HttpGet]
         //[Route("checkuserisvalid/{email}")]
@@ -153,7 +190,53 @@ namespace downtown.Controllers
         }
         #endregion
 
+        //[HttpPost]
+        //[Route("uploadfile")]
+        //public FileModel UploadFile(FileModel filemodel)
+        //{
+        //    var reponse = new FileModel();
+        //    string path = Path.Combine(@"D:\\myimage", filemodel.filename);
+        //    using (Stream stream = new FileStream(path, FileMode.Create))
+        //    {
+        //        //filemodel.file.CopyTo(stream);
+        //    }
+
+        //    return reponse;
+       // }
+        //[HttpPost]
+        //[Route("uploadfile")]
+        //public  FileModel UploadFile(FileModel fileModel)
+        //{
+
+        //    var response  = new FileModel();
+        //    string path = Path.Combine(@"D:\\myimage", fileModel.filename);
+        //    using (Stream stream = new FileStream(path, FileMode.Create))
+        //    {
+        //        //filemodel.file.CopyTo(stream);
+        //    }
+
+        //        return response;
+            
+        //}
 
 
+        [HttpPost]
+        [Route("uploadfil")]
+        public string UploadFil()
+        {
+            string reponse = "";
+
+            var httpRequest = HttpContext.Request;
+            var postedFile = httpRequest.Form.Files[0];
+            string filename = postedFile.FileName;
+            string paths = Path.Combine(@"D:\\myimage", filename);
+            using (Stream stream = new FileStream(paths, FileMode.Create))
+            {
+                postedFile.CopyTo(stream);
+            }
+            return reponse;
+        }
+
+       
     }
 }
